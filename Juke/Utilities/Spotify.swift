@@ -9,9 +9,15 @@
 import Foundation
 import SwiftyJSON
 
-
 public enum Spotify {
-  static var search: HTTP?
+  static var search: HTTP? {
+    willSet {
+      if let s = search {
+        s.cancel()
+      }
+    }
+  }
+  
   enum SpotifyError: ErrorType {
     case InvalidSearchTerm(String)
   }
@@ -40,7 +46,7 @@ public struct Album {
 }
 
 extension Album: JSONParsable {
-  public init?(fromJSON json: JSON) {
+  public init?(json: JSON) {
     guard let name = json["name"].string else {
       return nil
     }
@@ -48,7 +54,7 @@ extension Album: JSONParsable {
     var images = [SpotifyImage]()
     if let jsonImages = json["images"].array {
       jsonImages.forEach {
-        if let image = SpotifyImage(fromJSON: $0) {
+        if let image = SpotifyImage(json: $0) {
           images.append(image)
         }
       }
@@ -65,7 +71,7 @@ public struct SpotifyImage {
 }
 
 extension SpotifyImage: JSONParsable {
-  public init?(fromJSON json: JSON) {
+  public init?(json: JSON) {
     guard let url = json["url"].string, height = json["height"].int, width = json["width"].int else {
       return nil
     }
@@ -80,11 +86,11 @@ public struct SearchPayload {
 }
 
 extension SearchPayload: JSONParsable {
-  public init?(fromJSON json: JSON) {
+  public init?(json: JSON) {
     var results = [Album]()
     if let albums = json["albums"]["items"].array {
       albums.forEach {
-        if let album = Album(fromJSON: $0) {
+        if let album = Album(json: $0) {
           results.append(album)
         }
       }

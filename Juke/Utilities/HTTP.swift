@@ -11,13 +11,26 @@ import SwiftyJSON
 
 public class HTTP {
   // Internal Tooling
-  static let httpQueue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
   static let defaultSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
-  static var ongoingRequests = [Int: HTTP]()
+  static let httpQueue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
+  static let managementQueue = dispatch_queue_create("co.j3p.http.management", DISPATCH_QUEUE_SERIAL)
+  static var ongoingRequests: Set<HTTP> = Set<HTTP>()
   
   private static func queueBlock(block: () -> Void) {
     dispatch_async(HTTP.httpQueue) {
       block()
+    }
+  }
+  
+  private static func addRequest(request: HTTP) {
+    dispatch_async(HTTP.managementQueue) {
+      HTTP.ongoingRequests.insert(request)
+    }
+  }
+  
+  private static func removeRequest(request: HTTP) {
+    dispatch_async(HTTP.managementQueue) {
+      HTTP.ongoingRequests.remove(request)
     }
   }
   
@@ -36,6 +49,8 @@ public class HTTP {
     case responseFailedJSONSerialization(ErrorType)
     case framework(NSError)
     case failedToCreateObjectFromJson(JSON)
+    case failedToCreateObjectFromData(NSData)
+    case noDataAvailable
   }
   
   public enum Verb: String {
@@ -122,18 +137,18 @@ public class HTTP {
     return StatusCode(fromInt: sc)
   }
   
-  private let lookupValue: Int
   private let url: String
   private var finalUrl: NSURL? {
-    let finalUrlString: String
     if let params = self.params where self.action == .get {
-      let queryCharacterSet = NSCharacterSet.URLQueryAllowedCharacterSet()
-      let queryString = (params.flatMap { "\($0)=\($1.stringByAddingPercentEncodingWithAllowedCharacters(queryCharacterSet)!)" }).joinWithSeparator("&")
-      finalUrlString = "\(self.url)?\(queryString)"
-    } else {
-      finalUrlString = self.url
+      guard let urlParts = NSURLComponents(string: url) else {
+        return nil
+      }
+      urlParts.queryItems = params.map { NSURLQueryItem(name: $0, value: $1) }
+      return urlParts.URL
     }
-    return NSURL(string: finalUrlString)
+    else {
+      return NSURL(string: self.url)
+    }
   }
   private let action: Verb
   private var params: [String: String]?
@@ -141,8 +156,7 @@ public class HTTP {
   private var error: ErrorType? {
     didSet {
       if let e = error where self.errorHandlers.count > 0 {
-        let ehs = errorHandlers
-        ehs.forEach { eh in HTTP.queueBlock { eh(e) } }
+        self.errorHandlers.forEach { eh in HTTP.queueBlock { eh(e) } }
       }
       self.complete()
     }
@@ -154,18 +168,10 @@ public class HTTP {
   private var session: NSURLSession = HTTP.defaultSession
   
   private init(url: String, params: [String: String]? = nil, action: HTTP.Verb = .get) {
-    
-    var hashValue = url.hashValue ^ action.hashValue
-    if let params = params {
-      params.forEach { (key: String, value: String) in
-        hashValue = hashValue ^ key.hashValue ^ value.hashValue
-      }
-    }
-    self.lookupValue = hashValue
     self.url = url
     self.action = action
     self.params = params
-    HTTP.ongoingRequests[hashValue] = self
+    HTTP.addRequest(self)
   }
   
   public static func get(url: String, params: [String: String]? = nil) -> HTTP {
@@ -178,30 +184,45 @@ public class HTTP {
     return http
   }
   
-  public func onSession(session: NSURLSession) -> HTTP {
+  public func withSession(session: NSURLSession) -> HTTP {
     self.session = session
     return self
   }
   
-  public func then(handler: ResponseHandler) -> HTTP {
+  public func onResult(handler: ResponseHandler) -> HTTP {
     self.handler = handler
     self.queueRequest()
     return self
   }
   
-  public func then<T: JSONParsable>(handler: (T) -> ()) -> HTTP {
-    self.then { [weak self] (data: NSData?, response: NSHTTPURLResponse) in
+  public func onResult<T: DataCreatable>(handler: (T) -> ()) -> HTTP {
+    self.onResult { [weak self] (data: NSData?, response: NSHTTPURLResponse) in
       guard let strongSelf = self else {
         return
       }
       guard let data = data else {
+        strongSelf.error = Error.noDataAvailable
         return
       }
-      let json = JSON(data: data)
+      guard let item = T(data: data) else {
+        strongSelf.error = Error.failedToCreateObjectFromData(data)
+        return
+      }
+      HTTP.queueBlock { handler(item) }
+    }
+    return self
+  }
+  
+  public func onResult<T: JSONParsable>(handler: (T) -> ()) -> HTTP {
+    self.onResult { [weak self] (json: JSON) in
+      guard let strongSelf = self else {
+        return
+      }
       if let error = json.error {
         strongSelf.error = Error.responseFailedJSONSerialization(error)
+        return
       }
-      if let result = T(fromJSON: json) {
+      if let result = T(json: json) {
         HTTP.queueBlock { handler(result) }
       }
       else {
@@ -210,11 +231,12 @@ public class HTTP {
     }
     return self
   }
-  
+
   public func onError(handler: ErrorHandler) -> HTTP {
     if let e = self.error {
       handler(e)
-    } else {
+    }
+    else {
       self.errorHandlers.append(handler)
     }
     return self
@@ -236,7 +258,6 @@ public class HTTP {
         return
       }
     }
-    
     self.task = self.session.dataTaskWithRequest(request) { [weak self] (data: NSData?, response: NSURLResponse?, error: NSError?) in
       guard let strongSelf = self else {
         return
@@ -247,7 +268,7 @@ public class HTTP {
         switch errorCode {
         case NSURLError.NotConnectedToInternet.rawValue,
              NSURLError.NetworkConnectionLost.rawValue:
-              strongSelf.error = Error.networkUnavailable
+          strongSelf.error = Error.networkUnavailable
         case NSURLError.TimedOut.rawValue:
           strongSelf.error = Error.connectionTimedOut
         default:
@@ -282,7 +303,8 @@ public class HTTP {
   }
   
   public func cancel() {
-    HTTP.ongoingRequests.removeValueForKey(self.lookupValue)
+    self.task?.cancel()
+    self.complete()
   }
   
   private func queueHandler() {
@@ -295,15 +317,68 @@ public class HTTP {
   }
   
   private func complete() {
-    HTTP.queueBlock { [unowned self] in
-      HTTP.ongoingRequests.removeValueForKey(self.lookupValue)
-    }
+    HTTP.removeRequest(self)
     #if DEBUG
       print("On going http requests: \(HTTP.ongoingRequests.count)")
     #endif
   }
 }
 
+extension HTTP: Hashable, Equatable {
+  public var hashValue: Int {
+    var hash = self.url.hashValue ^ self.action.hashValue
+    if let params = params {
+      params.keys.sort().forEach { (key: String) in
+        guard let value = params[key] else {
+          hash = hash ^ key.hashValue
+          return
+        }
+        hash = hash ^ key.hashValue ^ value.hashValue
+      }
+    }
+    return hash
+  }
+}
+
+public func ==(lhs: HTTP, rhs: HTTP) -> Bool {
+  func paramsEqual() -> Bool {
+    switch (lhs.params, rhs.params) {
+    case (nil, nil):
+      return true
+    case(nil, .Some(_)), (.Some(_), nil):
+      return false
+    case(.Some(let lp), .Some(let rp)):
+      var result = lp.count == rp.count
+      if  result {
+        for key in lp.keys {
+          if lp[key] != rp[key] {
+            result = false
+            break;
+          }
+        }
+      }
+      return result
+    }
+  }
+  return lhs.url == rhs.url && lhs.action == rhs.action && paramsEqual()
+}
+
+public protocol DataCreatable {
+  init?(data: NSData)
+}
+
+extension UIImage: DataCreatable {}
+
+extension JSON: DataCreatable {
+  public init?(data: NSData) {
+    let error: NSErrorPointer = nil
+    self.init(data: data, options: .AllowFragments, error: error)
+    if error != nil {
+      return nil
+    }
+  }
+}
+
 public protocol JSONParsable {
-  init?(fromJSON: JSON)
+  init?(json: JSON)
 }

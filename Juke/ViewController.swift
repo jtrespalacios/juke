@@ -19,13 +19,7 @@ class ViewController: UIViewController {
         return
       }
       cell.imageLoadRequest = HTTP.get(image.url)
-        .then { (data: NSData?, response: NSHTTPURLResponse) in
-          guard let data = data else {
-            return
-          }
-          guard let image = UIImage(data: data) else {
-            return
-          }
+        .onResult { (image: UIImage) in
           dispatch_async(dispatch_get_main_queue()) {
             cell.imageView.image = image
           }
@@ -69,7 +63,7 @@ class ViewController: UIViewController {
     self.queryInput.resignFirstResponder()
     
     self.searchRequest = Spotify.searchAlbum(withTitle: searchTerm)
-      .then { (searchResult: SearchPayload) in
+      .onResult { (searchResult: SearchPayload) in
         dispatch_async(dispatch_get_main_queue()) { [weak self] in
           self?.updateResults(searchResult.albums)
         }
