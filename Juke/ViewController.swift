@@ -18,16 +18,7 @@ class ViewController: UIViewController {
       guard let image = album.images.first else {
         return
       }
-      cell.imageLoadRequest = HTTP.get(image.url)
-        .onResult { (image: UIImage) in
-          dispatch_async(dispatch_get_main_queue()) {
-            cell.imageView.image = image
-          }
-        }
-        .onError { (error: ErrorType) in
-          print("Error (\(error)) loading image from url \(image.url)")
-        }
-        .execute()
+      cell.albumArtView.loadImage(image.url)
     }
   }()
   private weak var searchRequest: HTTP?
@@ -49,12 +40,12 @@ class ViewController: UIViewController {
                           usingBlock: queryFieldBlock)
     self.collectionView.dataSource = self.dataSource
   }
-
+  
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
   }
-
+  
   @objc func executeSearch() {
     guard let searchTerm = self.queryInput.text where self.searchRequest == nil else {
       return
@@ -62,37 +53,62 @@ class ViewController: UIViewController {
     self.queryInput.text = nil
     self.queryInput.resignFirstResponder()
     
-    self.searchRequest = Spotify.searchAlbum(withTitle: searchTerm)
-      .onResult { (searchResult: SearchPayload) in
-        dispatch_async(dispatch_get_main_queue()) { [weak self] in
-          self?.updateResults(searchResult.albums)
+    self.searchRequest = Spotify.searchAlbum(withTitle: searchTerm) { (searchResults: SearchPayload?, error: Spotify.Error?) in
+      guard error == nil else {
+        let e = error!
+        dispatchMain { [weak self] in
+          self?.alertWithError(e)
         }
+        return
       }
-      .onError { (error: ErrorType) in
-        print("Error fetching albums: \(error)")
+      guard let searchResults = searchResults else {
+        return
       }
-      .execute()
+      dispatchMain { [weak self] in
+        self?.updateResults(searchResults.albums)
+      }
+    }
+  }
+  
+  private func alertWithError(error: Spotify.Error) {
+    let message: String
+    switch error {
+    case .invalidSearch:
+      message = "I couldn't figure out what you were looking for, please try again."
+    case .networkFailure:
+      message = "I experienced a network error, please try again later."
+    case .networkUnavailable:
+      message = "I've lost my connection to the network, can you check it out?"
+    }
+    
+    let alert = UIAlertController(title: "Ooops...", message: message, preferredStyle: .Alert)
+    let ok = UIAlertAction(title: "OK", style: .Default) { _ in
+      if error == .invalidSearch {
+        self.queryInput.becomeFirstResponder()
+      }
+    }
+    alert.addAction(ok)
   }
   
   private func updateResults(albums: [Album]) {
-    self.collectionView.performBatchUpdates({
+    self.collectionView.performBatchUpdates({ [unowned self] in
       let sectionZero = NSIndexSet(index: 0)
       self.dataSource.items = albums
       self.collectionView.deleteSections(sectionZero)
+      self.collectionView.setContentOffset(.zero, animated: false)
       self.collectionView.insertSections(sectionZero)
-    }, completion: nil)
+      }, completion: nil)
   }
 }
 
 public class AlbumCell: UICollectionViewCell {
-  @IBOutlet weak var imageView: UIImageView!
-  @IBOutlet weak var label: UILabel!
-  public weak var imageLoadRequest: HTTP?
+  @IBOutlet public weak var albumArtView: RemoteImageView!
+  @IBOutlet public weak var label: UILabel!
   
   public override func prepareForReuse() {
-    self.imageView.image = nil
+    self.albumArtView.image = nil
     self.label.text = nil
-    self.imageLoadRequest?.cancel()
+    self.albumArtView.cancelLoading()
   }
 }
 
@@ -124,4 +140,11 @@ class ArrayDataSource<T: UICollectionViewCell, U>: NSObject, UICollectionViewDat
     return items.count
   }
 }
+
+
+public func dispatchMain(block: () -> ()) {
+  dispatch_async(dispatch_get_main_queue(), block)
+}
+
+
 

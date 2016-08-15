@@ -18,24 +18,44 @@ public enum Spotify {
     }
   }
   
+  public enum Error {
+    case invalidSearch
+    case networkFailure
+    case networkUnavailable
+  }
+  
   enum SpotifyError: ErrorType {
     case InvalidSearchTerm(String)
   }
   
   private static let rootUrl = "https://api.spotify.com/v1/search"
   
-  public static func searchAlbum(withTitle title: String) -> HTTP {
+  public static func searchAlbum(withTitle title: String, resultHandler: (SearchPayload?, Error?) -> ()) -> HTTP {
     let queryParams: [String: String] = [
       "type": "album",
       "limit": "15",
       "q": "album:" + title
     ]
     let http = HTTP.get(Spotify.rootUrl, params: queryParams)
-    #if DEBUG
-      http.onError { (error: ErrorType) in
-        print("Spotify Search Request failed with error: \(error)")
+      .onError { (error: HTTP.Error) in
+        #if DEBUG
+          print("Spotify Search Request failed with error: \(error)")
+        #endif
+        let finalError: Error
+        switch error {
+        case .badRequest, .clientError(_):
+          finalError = .invalidSearch
+        case .networkUnavailable:
+          finalError = .networkUnavailable
+        default:
+          finalError = .networkFailure
+        }
+        HTTP.queueBlock { resultHandler(nil, finalError) }
       }
-    #endif
+      .onResult { (payload: SearchPayload) in
+        HTTP.queueBlock { resultHandler(payload, nil) }
+      }
+      .execute()
     return http
   }
 }

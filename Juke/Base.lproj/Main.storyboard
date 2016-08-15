@@ -48,7 +48,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="200" height="230"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="0aq-Jf-Q6E">
+                                                <imageView userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="0aq-Jf-Q6E" customClass="RemoteImageView" customModule="Juke" customModuleProvider="target">
                                                     <rect key="frame" x="12" y="12" width="176" height="176"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="0aq-Jf-Q6E" secondAttribute="height" multiplier="1:1" id="wNQ-er-Il0"/>
@@ -80,7 +80,7 @@
                                             </mask>
                                         </variation>
                                         <connections>
-                                            <outlet property="imageView" destination="0aq-Jf-Q6E" id="xme-so-Kj6"/>
+                                            <outlet property="albumArtView" destination="0aq-Jf-Q6E" id="NAI-nj-gCV"/>
                                             <outlet property="label" destination="Tiu-95-GE6" id="3kZ-zd-O7m"/>
                                         </connections>
                                     </collectionViewCell>

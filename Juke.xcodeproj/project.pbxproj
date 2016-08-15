@@ -17,6 +17,7 @@
 		96250A8E1D5FAEFB0029E366 /* JukeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96250A8D1D5FAEFB0029E366 /* JukeTests.swift */; };
 		96250A9B1D5FAF0D0029E366 /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96250A991D5FAF0D0029E366 /* HTTP.swift */; };
 		96250A9C1D5FAF0D0029E366 /* Spotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96250A9A1D5FAF0D0029E366 /* Spotify.swift */; };
+		96250A9E1D613D710029E366 /* RemoteImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96250A9D1D613D710029E366 /* RemoteImageView.swift */; };
 		B4117F802DE88127DCE104A2 /* Pods_Juke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5141BD6571F3784C37BF845 /* Pods_Juke.framework */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +48,7 @@
 		96250A8F1D5FAEFB0029E366 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		96250A991D5FAF0D0029E366 /* HTTP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTP.swift; sourceTree = "<group>"; };
 		96250A9A1D5FAF0D0029E366 /* Spotify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spotify.swift; sourceTree = "<group>"; };
+		96250A9D1D613D710029E366 /* RemoteImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteImageView.swift; sourceTree = "<group>"; };
 		A3D65BEB85E1181DCD5A4A77 /* Pods-Juke.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Juke.release.xcconfig"; path = "Pods/Target Support Files/Pods-Juke/Pods-Juke.release.xcconfig"; sourceTree = "<group>"; };
 		C0D5ADC1AAF944F37D890954 /* Pods-Juke.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Juke.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Juke/Pods-Juke.debug.xcconfig"; sourceTree = "<group>"; };
 		D5141BD6571F3784C37BF845 /* Pods_Juke.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Juke.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,6 +123,7 @@
 			children = (
 				96250A991D5FAF0D0029E366 /* HTTP.swift */,
 				96250A9A1D5FAF0D0029E366 /* Spotify.swift */,
+				96250A9D1D613D710029E366 /* RemoteImageView.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -349,6 +352,7 @@
 				96250A9C1D5FAF0D0029E366 /* Spotify.swift in Sources */,
 				96250A9B1D5FAF0D0029E366 /* HTTP.swift in Sources */,
 				96250A7E1D5FAEFA0029E366 /* Juke.xcdatamodeld in Sources */,
+				96250A9E1D613D710029E366 /* RemoteImageView.swift in Sources */,
 				96250A761D5FAEFA0029E366 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

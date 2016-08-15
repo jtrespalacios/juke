@@ -11,12 +11,12 @@ import SwiftyJSON
 
 public class HTTP {
   // Internal Tooling
-  static let defaultSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
-  static let httpQueue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
-  static let managementQueue = dispatch_queue_create("co.j3p.http.management", DISPATCH_QUEUE_SERIAL)
-  static var ongoingRequests: Set<HTTP> = Set<HTTP>()
+  private static let defaultSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+  private static let httpQueue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
+  private static let managementQueue = dispatch_queue_create("co.j3p.http.management", DISPATCH_QUEUE_SERIAL)
+  private static var ongoingRequests: Set<HTTP> = Set<HTTP>()
   
-  private static func queueBlock(block: () -> Void) {
+  public static func queueBlock(block: () -> Void) {
     dispatch_async(HTTP.httpQueue) {
       block()
     }
@@ -53,11 +53,11 @@ public class HTTP {
     case noDataAvailable
   }
   
-  public enum Verb: String {
-    case get = "get"
-    case post = "post"
-    case delete = "delete"
-    case puts = "puts"
+  public enum Action: String {
+    case get
+    case post
+    case delete
+    case puts
   }
   
   public enum StatusCode {
@@ -127,8 +127,26 @@ public class HTTP {
   }
   
   public typealias ResponseHandler = (NSData?, NSHTTPURLResponse) -> ()
-  public typealias ErrorHandler = (ErrorType) -> ()
+  public typealias ErrorHandler = (Error) -> ()
   
+  public var request: NSURLRequest? {
+    guard let finalUrl = self.finalUrl else {
+      self.error = Error.invalidUrl
+      return nil
+    }
+    let request = NSMutableURLRequest(URL: finalUrl)
+    request.HTTPMethod = self.action.rawValue
+    if let params = self.params where self.action == .post {
+      do {
+        request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(params, options: [])
+      }
+      catch {
+        self.error = Error.paramsFailedToSerialize(error)
+        return nil
+      }
+    }
+    return request
+  }
   public var response: NSHTTPURLResponse?
   public var statusCode: StatusCode? {
     guard let sc = response?.statusCode else {
@@ -150,10 +168,10 @@ public class HTTP {
       return NSURL(string: self.url)
     }
   }
-  private let action: Verb
+  private let action: Action
   private var params: [String: String]?
   private var handler: ResponseHandler?
-  private var error: ErrorType? {
+  private var error: Error? {
     didSet {
       if let e = error where self.errorHandlers.count > 0 {
         self.errorHandlers.forEach { eh in HTTP.queueBlock { eh(e) } }
@@ -167,19 +185,19 @@ public class HTTP {
   private var task: NSURLSessionTask?
   private var session: NSURLSession = HTTP.defaultSession
   
-  private init(url: String, params: [String: String]? = nil, action: HTTP.Verb = .get) {
+  public init(url: String, params: [String: String]? = nil, action: HTTP.Action = .get) {
     self.url = url
     self.action = action
     self.params = params
     HTTP.addRequest(self)
   }
   
-  public static func get(url: String, params: [String: String]? = nil) -> HTTP {
+  public class func get(url: String, params: [String: String]? = nil) -> HTTP {
     let http = HTTP(url: url, params: params)
     return http
   }
   
-  public static func post(url: String, params: [String: String]) -> HTTP {
+  public class func post(url: String, params: [String: String]) -> HTTP {
     let http = HTTP(url: url, params: params, action: .post)
     return http
   }
@@ -242,21 +260,9 @@ public class HTTP {
     return self
   }
   
-  private func queueRequest() {
-    guard let finalUrl = self.finalUrl else {
-      self.error = Error.invalidUrl
+  internal func queueRequest() {
+    guard let request = request else {
       return
-    }
-    let request = NSMutableURLRequest(URL: finalUrl)
-    request.HTTPMethod = self.action.rawValue
-    if let params = self.params where self.action == .post {
-      do {
-        request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(params, options: [])
-      }
-      catch {
-        self.error = Error.paramsFailedToSerialize(error)
-        return
-      }
     }
     self.task = self.session.dataTaskWithRequest(request) { [weak self] (data: NSData?, response: NSURLResponse?, error: NSError?) in
       guard let strongSelf = self else {
@@ -316,7 +322,7 @@ public class HTTP {
     }
   }
   
-  private func complete() {
+  internal func complete() {
     HTTP.removeRequest(self)
     #if DEBUG
       print("On going http requests: \(HTTP.ongoingRequests.count)")
