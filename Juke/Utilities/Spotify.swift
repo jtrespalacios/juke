@@ -10,26 +10,14 @@ import Foundation
 import SwiftyJSON
 
 public enum Spotify {
-  static var search: HTTP? {
-    willSet {
-      if let s = search {
-        s.cancel()
-      }
-    }
-  }
-  
   public enum Error {
-    case invalidSearch
+    case invalidSearch(String)
     case networkFailure
     case networkUnavailable
   }
-  
-  enum SpotifyError: ErrorType {
-    case InvalidSearchTerm(String)
-  }
-  
+
   private static let rootUrl = "https://api.spotify.com/v1/search"
-  
+
   public static func searchAlbum(withTitle title: String, resultHandler: (SearchPayload?, Error?) -> ()) -> HTTP {
     let queryParams: [String: String] = [
       "type": "album",
@@ -44,7 +32,7 @@ public enum Spotify {
         let finalError: Error
         switch error {
         case .badRequest, .clientError(_):
-          finalError = .invalidSearch
+          finalError = .invalidSearch(title)
         case .networkUnavailable:
           finalError = .networkUnavailable
         default:
@@ -61,16 +49,23 @@ public enum Spotify {
 }
 
 public struct Album {
+  let id: String
   let name: String
+  let detailPage: String
   let images: [SpotifyImage]
 }
 
 extension Album: JSONParsable {
   public init?(json: JSON) {
+    guard let id = json["id"].string else {
+      return nil
+    }
     guard let name = json["name"].string else {
       return nil
     }
-    
+    guard let detailPage = json["href"].string else {
+      return nil
+    }
     var images = [SpotifyImage]()
     if let jsonImages = json["images"].array {
       jsonImages.forEach {
@@ -79,8 +74,33 @@ extension Album: JSONParsable {
         }
       }
     }
+    self.id = id
     self.name = name
+    self.detailPage = detailPage
     self.images = images
+  }
+}
+
+extension Album {
+  func imageNearestTo(width: Int) -> SpotifyImage? {
+    guard images.count > 0 else {
+      return nil
+    }
+    let actualWidth = width * Int(UIScreen.mainScreen().nativeScale)
+    var smallestDelta = -1
+    var indexOfSmallest = 0
+    _ = (images.map { abs(actualWidth - $0.width) }).enumerate().forEach { (index: Int, value: Int) in
+      guard index != 0 else {
+        smallestDelta = value
+        return
+      }
+      if value < smallestDelta {
+        smallestDelta = value
+        indexOfSmallest = index
+      }
+
+    }
+    return images[indexOfSmallest]
   }
 }
 

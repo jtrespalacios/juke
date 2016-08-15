@@ -83,8 +83,11 @@ class ViewController: UIViewController {
     
     let alert = UIAlertController(title: "Ooops...", message: message, preferredStyle: .Alert)
     let ok = UIAlertAction(title: "OK", style: .Default) { _ in
-      if error == .invalidSearch {
+      switch error {
+      case .invalidSearch(_):
         self.queryInput.becomeFirstResponder()
+      default:
+        break;
       }
     }
     alert.addAction(ok)
@@ -110,40 +113,6 @@ public class AlbumCell: UICollectionViewCell {
     self.label.text = nil
     self.albumArtView.cancelLoading()
   }
-}
-
-class ArrayDataSource<T: UICollectionViewCell, U>: NSObject, UICollectionViewDataSource {
-  typealias CellFormatter = (T, U) -> ()
-  var items = [U]()
-  let format: CellFormatter
-  let reuseKey: String
-  
-  init(reuseKey: String, formatter: CellFormatter) {
-    self.reuseKey = reuseKey
-    self.format = formatter
-  }
-  
-  func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-    let item = self.items[indexPath.item]
-    guard let cell = collectionView.dequeueReusableCellWithReuseIdentifier(self.reuseKey, forIndexPath: indexPath) as? T else {
-      fatalError("Could not downcast to correct type")
-    }
-    self.format(cell, item)
-    return cell
-  }
-  
-  func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-    return 1
-  }
-  
-  func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    return items.count
-  }
-}
-
-
-public func dispatchMain(block: () -> ()) {
-  dispatch_async(dispatch_get_main_queue(), block)
 }
 
 

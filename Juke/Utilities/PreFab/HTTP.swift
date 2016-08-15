@@ -15,25 +15,25 @@ public class HTTP {
   private static let httpQueue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
   private static let managementQueue = dispatch_queue_create("co.j3p.http.management", DISPATCH_QUEUE_SERIAL)
   private static var ongoingRequests: Set<HTTP> = Set<HTTP>()
-  
+
   public static func queueBlock(block: () -> Void) {
     dispatch_async(HTTP.httpQueue) {
       block()
     }
   }
-  
+
   private static func addRequest(request: HTTP) {
     dispatch_async(HTTP.managementQueue) {
       HTTP.ongoingRequests.insert(request)
     }
   }
-  
+
   private static func removeRequest(request: HTTP) {
     dispatch_async(HTTP.managementQueue) {
       HTTP.ongoingRequests.remove(request)
     }
   }
-  
+
   public enum Error: ErrorType {
     case invalidUrl
     case networkUnavailable
@@ -52,14 +52,14 @@ public class HTTP {
     case failedToCreateObjectFromData(NSData)
     case noDataAvailable
   }
-  
+
   public enum Action: String {
     case get
     case post
     case delete
     case puts
   }
-  
+
   public enum StatusCode {
     case ok
     case created
@@ -74,7 +74,7 @@ public class HTTP {
     case clientError(Int)
     case serverError(Int)
     case unknown(Int)
-    
+
     init(fromInt i: Int) {
       switch i {
       case 200:
@@ -105,7 +105,7 @@ public class HTTP {
         self = .unknown(i)
       }
     }
-    
+
     var error: Error? {
       switch self {
       case .ok, .created, .noContent, .success(_), .notModified, .redirected(_), .unknown(_):
@@ -125,10 +125,10 @@ public class HTTP {
       }
     }
   }
-  
+
   public typealias ResponseHandler = (NSData?, NSHTTPURLResponse) -> ()
   public typealias ErrorHandler = (Error) -> ()
-  
+
   public var request: NSURLRequest? {
     guard let finalUrl = self.finalUrl else {
       self.error = Error.invalidUrl
@@ -154,7 +154,7 @@ public class HTTP {
     }
     return StatusCode(fromInt: sc)
   }
-  
+
   private let url: String
   private var finalUrl: NSURL? {
     if let params = self.params where self.action == .get {
@@ -179,40 +179,40 @@ public class HTTP {
       self.complete()
     }
   }
-  
+
   private var responseData: NSData?
   private var errorHandlers = Array<ErrorHandler>()
   private var task: NSURLSessionTask?
   private var session: NSURLSession = HTTP.defaultSession
-  
+
   public init(url: String, params: [String: String]? = nil, action: HTTP.Action = .get) {
     self.url = url
     self.action = action
     self.params = params
     HTTP.addRequest(self)
   }
-  
+
   public class func get(url: String, params: [String: String]? = nil) -> HTTP {
     let http = HTTP(url: url, params: params)
     return http
   }
-  
+
   public class func post(url: String, params: [String: String]) -> HTTP {
     let http = HTTP(url: url, params: params, action: .post)
     return http
   }
-  
+
   public func withSession(session: NSURLSession) -> HTTP {
     self.session = session
     return self
   }
-  
+
   public func onResult(handler: ResponseHandler) -> HTTP {
     self.handler = handler
     self.queueRequest()
     return self
   }
-  
+
   public func onResult<T: DataCreatable>(handler: (T) -> ()) -> HTTP {
     self.onResult { [weak self] (data: NSData?, response: NSHTTPURLResponse) in
       guard let strongSelf = self else {
@@ -230,7 +230,7 @@ public class HTTP {
     }
     return self
   }
-  
+
   public func onResult<T: JSONParsable>(handler: (T) -> ()) -> HTTP {
     self.onResult { [weak self] (json: JSON) in
       guard let strongSelf = self else {
@@ -259,7 +259,7 @@ public class HTTP {
     }
     return self
   }
-  
+
   internal func queueRequest() {
     guard let request = request else {
       return
@@ -268,7 +268,6 @@ public class HTTP {
       guard let strongSelf = self else {
         return
       }
-      
       if let e = error {
         let errorCode = e.code
         switch errorCode {
@@ -282,18 +281,15 @@ public class HTTP {
         }
         return
       }
-      
       strongSelf.responseData = data
       guard let httpResponse = response as? NSHTTPURLResponse else {
         strongSelf.error = Error.unexpectedResponse(response)
         return
       }
-      
       strongSelf.response = httpResponse
       guard let sc = strongSelf.statusCode else {
         return
       }
-      
       switch sc {
       case .ok, .success(_):
         strongSelf.queueHandler()
@@ -302,17 +298,17 @@ public class HTTP {
       }
     }
   }
-  
+
   public func execute() -> HTTP {
     self.task?.resume()
     return self
   }
-  
+
   public func cancel() {
     self.task?.cancel()
     self.complete()
   }
-  
+
   private func queueHandler() {
     if let handler = self.handler, responseData = self.responseData, response = self.response {
       HTTP.queueBlock { [unowned self] in
@@ -321,7 +317,7 @@ public class HTTP {
       }
     }
   }
-  
+
   internal func complete() {
     HTTP.removeRequest(self)
     #if DEBUG
