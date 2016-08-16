@@ -1,0 +1,35 @@
+{
+  "albums" : {
+    "href" : "https://api.spotify.com/v1/search?query=album%3Atesting&offset=0&limit=3&type=album",
+    "items" : [ {
+               "album_type" : "album",
+               "available_markets" : [ "CA", "US" ],
+               "external_urls" : {
+               "spotify" : "https://open.spotify.com/album/4BqbonMPCLJIZ9Txo866l9"
+               },
+               "href" : "https://api.spotify.com/v1/albums/4BqbonMPCLJIZ9Txo866l9",
+               "id" : "4BqbonMPCLJIZ9Txo866l9",
+               "images" : [ {
+                           "height" : 640,
+                           "url" : "https://i.scdn.co/image/191a71b149c951e18592a6bd0f9ccfe760a35749",
+                           "width" : 640
+                           }, {
+                           "height" : 300,
+                           "url" : "https://i.scdn.co/image/7adf440aacf1059776d80cc66c6be332f0b3ffe0",
+                           "width" : 300
+                           }, {
+                           "height" : 64,
+                           "url" : "https://i.scdn.co/image/b064290b69eee4d01e89409c958b60d45cf52007",
+                           "width" : 64
+                           } ],
+               "name" : "Reality Testing",
+               "type" : "album",
+               "uri" : "spotify:album:4BqbonMPCLJIZ9Txo866l9"
+               }],
+    "limit" : 3,
+    "next" : "https://api.spotify.com/v1/search?query=album%3Atesting&offset=3&limit=3&type=album",
+    "offset" : 0,
+    "previous" : null,
+    "total" : 87
+  }
+}

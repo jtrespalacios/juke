@@ -138,11 +138,12 @@ public struct SearchPayload {
 extension SearchPayload: JSONParsable {
   public init?(json: JSON) {
     var results = [SpotifyAlbum]()
-    if let albums = json["albums"]["items"].array {
-      albums.forEach {
-        if let album = SpotifyAlbum(json: $0) {
-          results.append(album)
-        }
+    guard let albums = json["albums"]["items"].array else {
+      return nil
+    }
+    albums.forEach {
+      if let album = SpotifyAlbum(json: $0) {
+        results.append(album)
       }
     }
     self.albums = results

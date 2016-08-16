@@ -13,7 +13,7 @@
 		96250A7E1D5FAEFA0029E366 /* Juke.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 96250A7C1D5FAEFA0029E366 /* Juke.xcdatamodeld */; };
 		96250A801D5FAEFA0029E366 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96250A7F1D5FAEFA0029E366 /* Assets.xcassets */; };
 		96250A831D5FAEFA0029E366 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96250A811D5FAEFA0029E366 /* LaunchScreen.storyboard */; };
-		96250A8E1D5FAEFB0029E366 /* JukeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96250A8D1D5FAEFB0029E366 /* JukeTests.swift */; };
+		96250A8E1D5FAEFB0029E366 /* Int_MemoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96250A8D1D5FAEFB0029E366 /* Int_MemoryTest.swift */; };
 		96250A9C1D5FAF0D0029E366 /* Spotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96250A9A1D5FAF0D0029E366 /* Spotify.swift */; };
 		96FA555D1D62A92B00B9391F /* FavoriteRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA555C1D62A92A00B9391F /* FavoriteRepo.swift */; };
 		96FA55601D62AE7800B9391F /* AlbumCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA555F1D62AE7800B9391F /* AlbumCell.swift */; };
@@ -27,6 +27,9 @@
 		96FA557F1D63946000B9391F /* Int+Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA55791D63946000B9391F /* Int+Memory.swift */; };
 		96FA55801D63946000B9391F /* Methods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA557A1D63946000B9391F /* Methods.swift */; };
 		96FA55811D63946000B9391F /* RemoteImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA557B1D63946000B9391F /* RemoteImageView.swift */; };
+		96FA55831D63B24500B9391F /* SpotifyTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA55821D63B24500B9391F /* SpotifyTest.swift */; };
+		96FA55851D63B45600B9391F /* TestAlbums.json in Resources */ = {isa = PBXBuildFile; fileRef = 96FA55841D63B45600B9391F /* TestAlbums.json */; };
+		96FA55871D63B7D700B9391F /* JSONLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA55861D63B7D700B9391F /* JSONLoader.swift */; };
 		B4117F802DE88127DCE104A2 /* Pods_Juke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5141BD6571F3784C37BF845 /* Pods_Juke.framework */; };
 /* End PBXBuildFile section */
 
@@ -52,7 +55,7 @@
 		96250A821D5FAEFA0029E366 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		96250A841D5FAEFA0029E366 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		96250A891D5FAEFB0029E366 /* JukeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JukeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		96250A8D1D5FAEFB0029E366 /* JukeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JukeTests.swift; sourceTree = "<group>"; };
+		96250A8D1D5FAEFB0029E366 /* Int_MemoryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int_MemoryTest.swift; sourceTree = "<group>"; };
 		96250A8F1D5FAEFB0029E366 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		96250A9A1D5FAF0D0029E366 /* Spotify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spotify.swift; sourceTree = "<group>"; };
 		96FA555C1D62A92A00B9391F /* FavoriteRepo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoriteRepo.swift; sourceTree = "<group>"; };
@@ -67,6 +70,9 @@
 		96FA55791D63946000B9391F /* Int+Memory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Memory.swift"; sourceTree = "<group>"; };
 		96FA557A1D63946000B9391F /* Methods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Methods.swift; sourceTree = "<group>"; };
 		96FA557B1D63946000B9391F /* RemoteImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteImageView.swift; sourceTree = "<group>"; };
+		96FA55821D63B24500B9391F /* SpotifyTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyTest.swift; sourceTree = "<group>"; };
+		96FA55841D63B45600B9391F /* TestAlbums.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestAlbums.json; sourceTree = "<group>"; };
+		96FA55861D63B7D700B9391F /* JSONLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONLoader.swift; sourceTree = "<group>"; };
 		A3D65BEB85E1181DCD5A4A77 /* Pods-Juke.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Juke.release.xcconfig"; path = "Pods/Target Support Files/Pods-Juke/Pods-Juke.release.xcconfig"; sourceTree = "<group>"; };
 		C0D5ADC1AAF944F37D890954 /* Pods-Juke.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Juke.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Juke/Pods-Juke.debug.xcconfig"; sourceTree = "<group>"; };
 		D5141BD6571F3784C37BF845 /* Pods_Juke.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Juke.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -131,8 +137,11 @@
 		96250A8C1D5FAEFB0029E366 /* JukeTests */ = {
 			isa = PBXGroup;
 			children = (
-				96250A8D1D5FAEFB0029E366 /* JukeTests.swift */,
+				96FA55821D63B24500B9391F /* SpotifyTest.swift */,
+				96250A8D1D5FAEFB0029E366 /* Int_MemoryTest.swift */,
 				96250A8F1D5FAEFB0029E366 /* Info.plist */,
+				96FA55841D63B45600B9391F /* TestAlbums.json */,
+				96FA55861D63B7D700B9391F /* JSONLoader.swift */,
 			);
 			path = JukeTests;
 			sourceTree = "<group>";
@@ -288,6 +297,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96FA55851D63B45600B9391F /* TestAlbums.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,7 +424,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96250A8E1D5FAEFB0029E366 /* JukeTests.swift in Sources */,
+				96FA55871D63B7D700B9391F /* JSONLoader.swift in Sources */,
+				96FA55831D63B24500B9391F /* SpotifyTest.swift in Sources */,
+				96250A8E1D5FAEFB0029E366 /* Int_MemoryTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

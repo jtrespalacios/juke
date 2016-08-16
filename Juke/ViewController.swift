@@ -103,8 +103,12 @@ import SafariServices
 
   override func viewDidAppear(animated: Bool) {
     super.viewDidAppear(animated)
-    self.queryInput.text = "Hello Nasty"
-    self.executeSearch()
+    self.queryInput.becomeFirstResponder()
+  }
+
+  override func viewDidDisappear(animated: Bool) {
+    super.viewDidDisappear(animated)
+    self.favoriteRepo.save()
   }
 
   override func canBecomeFirstResponder() -> Bool {
@@ -219,7 +223,6 @@ import SafariServices
   }
 
   private func updateResults(albums: [SpotifyAlbum]) {
-    self.favoriteRepo.save()
     self.favoriteRepo.checkForExistingFavorites(albums)
     self.selectedIndexPath = nil
     self.collectionView.performBatchUpdates({ [unowned self] in

@@ -23,13 +23,13 @@ public class RemoteImageView: UIImageView {
   }
 
   public func displayFromRemoateLoad(image: UIImage) {
-    self.transform = CGAffineTransformScale(self.transform, 0.01, 0.01)
     self.image = image
-    UIView.animateWithDuration(0.2,
-                               delay: 0,
-                               options: [.CurveEaseOut],
-                               animations: { self.transform = CGAffineTransformIdentity },
-                               completion: nil)
+    self.hidden = true
+    UIView.transitionWithView(self,
+                              duration: 0.2,
+                              options: [.CurveEaseOut, .TransitionCrossDissolve],
+                              animations: { self.hidden = false },
+                              completion: nil)
   }
 
   public func displayFromCacheLoad(image: UIImage) {
