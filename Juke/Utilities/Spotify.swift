@@ -48,11 +48,19 @@ public enum Spotify {
   }
 }
 
-public struct Album {
-  let id: String
+public struct Album: Hashable, Equatable {
+  let spotifyId: String
   let name: String
   let detailPage: String
   let images: [SpotifyImage]
+
+  public var hashValue: Int {
+    return 0
+  }
+}
+
+public func ==(lhs: Album, rhs: Album) -> Bool {
+  return lhs.spotifyId == rhs.spotifyId
 }
 
 extension Album: JSONParsable {
@@ -74,12 +82,13 @@ extension Album: JSONParsable {
         }
       }
     }
-    self.id = id
+    self.spotifyId = id
     self.name = name
     self.detailPage = detailPage
     self.images = images
   }
 }
+
 
 extension Album {
   func imageNearestTo(width: Int) -> SpotifyImage? {

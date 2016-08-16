@@ -10,7 +10,6 @@
 		904EB9F30BD07C1CA861A306 /* Pods_JukeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BD34125C3F0CFC42EB8808B /* Pods_JukeTests.framework */; };
 		96250A761D5FAEFA0029E366 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96250A751D5FAEFA0029E366 /* AppDelegate.swift */; };
 		96250A781D5FAEFA0029E366 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96250A771D5FAEFA0029E366 /* ViewController.swift */; };
-		96250A7B1D5FAEFA0029E366 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96250A791D5FAEFA0029E366 /* Main.storyboard */; };
 		96250A7E1D5FAEFA0029E366 /* Juke.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 96250A7C1D5FAEFA0029E366 /* Juke.xcdatamodeld */; };
 		96250A801D5FAEFA0029E366 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96250A7F1D5FAEFA0029E366 /* Assets.xcassets */; };
 		96250A831D5FAEFA0029E366 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96250A811D5FAEFA0029E366 /* LaunchScreen.storyboard */; };
@@ -22,6 +21,8 @@
 		96FA55591D624EF100B9391F /* Int+Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA55531D624EF100B9391F /* Int+Memory.swift */; };
 		96FA555A1D624EF100B9391F /* Methods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA55541D624EF100B9391F /* Methods.swift */; };
 		96FA555B1D624EF100B9391F /* RemoteImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA55551D624EF100B9391F /* RemoteImageView.swift */; };
+		96FA555D1D62A92B00B9391F /* FavoriteRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA555C1D62A92A00B9391F /* FavoriteRepo.swift */; };
+		96FA55601D62AE7800B9391F /* AlbumCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FA555F1D62AE7800B9391F /* AlbumCell.swift */; };
 		B4117F802DE88127DCE104A2 /* Pods_Juke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5141BD6571F3784C37BF845 /* Pods_Juke.framework */; };
 /* End PBXBuildFile section */
 
@@ -42,7 +43,6 @@
 		96250A721D5FAEFA0029E366 /* Juke.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Juke.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96250A751D5FAEFA0029E366 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		96250A771D5FAEFA0029E366 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		96250A7A1D5FAEFA0029E366 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		96250A7D1D5FAEFA0029E366 /* Juke.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Juke.xcdatamodel; sourceTree = "<group>"; };
 		96250A7F1D5FAEFA0029E366 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		96250A821D5FAEFA0029E366 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -57,6 +57,8 @@
 		96FA55531D624EF100B9391F /* Int+Memory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Int+Memory.swift"; path = "PreFab/Int+Memory.swift"; sourceTree = "<group>"; };
 		96FA55541D624EF100B9391F /* Methods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Methods.swift; path = PreFab/Methods.swift; sourceTree = "<group>"; };
 		96FA55551D624EF100B9391F /* RemoteImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RemoteImageView.swift; path = PreFab/RemoteImageView.swift; sourceTree = "<group>"; };
+		96FA555C1D62A92A00B9391F /* FavoriteRepo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoriteRepo.swift; sourceTree = "<group>"; };
+		96FA555F1D62AE7800B9391F /* AlbumCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AlbumCell.swift; path = Views/AlbumCell.swift; sourceTree = "<group>"; };
 		A3D65BEB85E1181DCD5A4A77 /* Pods-Juke.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Juke.release.xcconfig"; path = "Pods/Target Support Files/Pods-Juke/Pods-Juke.release.xcconfig"; sourceTree = "<group>"; };
 		C0D5ADC1AAF944F37D890954 /* Pods-Juke.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Juke.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Juke/Pods-Juke.debug.xcconfig"; sourceTree = "<group>"; };
 		D5141BD6571F3784C37BF845 /* Pods_Juke.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Juke.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,10 +107,10 @@
 		96250A741D5FAEFA0029E366 /* Juke */ = {
 			isa = PBXGroup;
 			children = (
+				96FA555E1D62AE4700B9391F /* Views */,
 				96250A981D5FAF0D0029E366 /* Utilities */,
 				96250A751D5FAEFA0029E366 /* AppDelegate.swift */,
 				96250A771D5FAEFA0029E366 /* ViewController.swift */,
-				96250A791D5FAEFA0029E366 /* Main.storyboard */,
 				96250A7F1D5FAEFA0029E366 /* Assets.xcassets */,
 				96250A811D5FAEFA0029E366 /* LaunchScreen.storyboard */,
 				96250A841D5FAEFA0029E366 /* Info.plist */,
@@ -131,6 +133,7 @@
 			children = (
 				96FA554F1D624ECC00B9391F /* PreFab */,
 				96250A9A1D5FAF0D0029E366 /* Spotify.swift */,
+				96FA555C1D62A92A00B9391F /* FavoriteRepo.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -146,6 +149,14 @@
 				96FA55551D624EF100B9391F /* RemoteImageView.swift */,
 			);
 			name = PreFab;
+			sourceTree = "<group>";
+		};
+		96FA555E1D62AE4700B9391F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				96FA555F1D62AE7800B9391F /* AlbumCell.swift */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 		9B4FCB9BD56A72C43B9C7735 /* Frameworks */ = {
@@ -257,7 +268,6 @@
 			files = (
 				96250A831D5FAEFA0029E366 /* LaunchScreen.storyboard in Resources */,
 				96250A801D5FAEFA0029E366 /* Assets.xcassets in Resources */,
-				96250A7B1D5FAEFA0029E366 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,6 +381,7 @@
 				96FA55561D624EF100B9391F /* ArrayDataSource.swift in Sources */,
 				96FA555A1D624EF100B9391F /* Methods.swift in Sources */,
 				96250A781D5FAEFA0029E366 /* ViewController.swift in Sources */,
+				96FA555D1D62A92B00B9391F /* FavoriteRepo.swift in Sources */,
 				96FA55591D624EF100B9391F /* Int+Memory.swift in Sources */,
 				96250A9C1D5FAF0D0029E366 /* Spotify.swift in Sources */,
 				96FA55571D624EF100B9391F /* HTTP.swift in Sources */,
@@ -378,6 +389,7 @@
 				96250A761D5FAEFA0029E366 /* AppDelegate.swift in Sources */,
 				96FA555B1D624EF100B9391F /* RemoteImageView.swift in Sources */,
 				96FA55581D624EF100B9391F /* ImageLoad.swift in Sources */,
+				96FA55601D62AE7800B9391F /* AlbumCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,14 +412,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		96250A791D5FAEFA0029E366 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				96250A7A1D5FAEFA0029E366 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		96250A811D5FAEFA0029E366 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

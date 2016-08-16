@@ -16,7 +16,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
   func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-    // Override point for customization after application launch.
+    let favoriteRepo = FavoriteAlbumRepo(context: managedObjectContext)
+    let dataSource = ArrayDataSource(reuseKey: AlbumCell.reuseIdentifier) { (cell: AlbumCell, album: Album) in
+      cell.label.text = album.name
+      guard let image = album.images.first else {
+        return
+      }
+      cell.albumArtView.loadImage(image.url)
+    }
+    let viewController = ViewController(repo: favoriteRepo, dataSource: dataSource)
+    let frame = UIScreen.mainScreen().bounds
+    let window = UIWindow(frame: frame)
+    window.rootViewController = viewController
+    self.window = window
+    self.window?.makeKeyAndVisible()
     return true
   }
 
