@@ -10,6 +10,11 @@ import Foundation
 import SwiftyJSON
 
 public enum Spotify {
+  private static let session: NSURLSession = {
+    let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+    config.timeoutIntervalForRequest = 5
+    return NSURLSession(configuration: config)
+  }()
   public enum Error {
     case invalidSearch(String)
     case networkFailure
@@ -25,6 +30,7 @@ public enum Spotify {
       "q": "album:" + title
     ]
     let http = HTTP.get(Spotify.rootUrl, params: queryParams)
+      .withSession(Spotify.session)
       .onError { (error: HTTP.Error) in
         #if DEBUG
           print("Spotify Search Request failed with error: \(error)")

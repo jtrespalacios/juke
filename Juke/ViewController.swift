@@ -42,16 +42,18 @@ import SafariServices
     let layout = UICollectionViewFlowLayout()
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
     searchButton.setTitle("Search", forState: .Normal)
-    layout.itemSize = CGSize(width: 200, height: 230)
-    layout.minimumLineSpacing = 10
-    layout.minimumInteritemSpacing = 10
+    layout.itemSize = CGSize(width: 360, height: 400)
+    layout.minimumLineSpacing = 5
+    layout.minimumInteritemSpacing = 5
     collectionView.collectionViewLayout = layout
     [queryInput, searchButton, collectionView].forEach {
       $0.translatesAutoresizingMaskIntoConstraints = false
       view.addSubview($0)
     }
     view.backgroundColor = UIColor.whiteColor()
-    collectionView.backgroundColor = UIColor.whiteColor()
+    collectionView.backgroundColor = nil
+    collectionView.backgroundView = nil
+    collectionView.contentInset = UIEdgeInsetsMake(0, 0, 20, 0)
     queryInput.borderStyle = .RoundedRect
     queryInput.placeholder = "Album Title"
     self.view = view
@@ -95,7 +97,7 @@ import SafariServices
       NSLayoutConstraint.constraintsWithVisualFormat("H:|-[cv]-|", options: [.AlignAllCenterY], metrics: nil, views: viewBindings)
     )
     view.addConstraints(
-      NSLayoutConstraint.constraintsWithVisualFormat("V:|->=0-[tlg]-[qi]-[cv]-|", options: [], metrics: nil, views: viewBindings)
+      NSLayoutConstraint.constraintsWithVisualFormat("V:[tlg]-[qi]-[cv]-|", options: [], metrics: nil, views: viewBindings)
     )
   }
 
@@ -219,6 +221,7 @@ import SafariServices
   private func updateResults(albums: [SpotifyAlbum]) {
     self.favoriteRepo.save()
     self.favoriteRepo.checkForExistingFavorites(albums)
+    self.selectedIndexPath = nil
     self.collectionView.performBatchUpdates({ [unowned self] in
       let sectionZero = NSIndexSet(index: 0)
       self.dataSource.items = albums

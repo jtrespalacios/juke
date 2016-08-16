@@ -15,7 +15,17 @@ class AlbumCell: UICollectionViewCell {
 
   override init(frame: CGRect) {
     let remoteImageView = RemoteImageView(frame: .zero)
+    remoteImageView.contentMode = .ScaleAspectFit
+    remoteImageView.layer.cornerRadius = 5
     let label = UILabel(frame: .zero)
+    label.numberOfLines = 0
+    label.allowsDefaultTighteningForTruncation = true
+    label.adjustsFontSizeToFitWidth = true
+    label.minimumScaleFactor = 0.75
+    label.textAlignment = .Center
+    label.translatesAutoresizingMaskIntoConstraints = false
+    label.backgroundColor = UIColor.whiteColor()
+
     self.albumArtView = remoteImageView
     self.label = label
     super.init(frame: frame)
@@ -28,25 +38,26 @@ class AlbumCell: UICollectionViewCell {
       "lb": label
     ]
     self.contentView.addConstraints(
-      NSLayoutConstraint.constraintsWithVisualFormat("H:|-[iv]-|", options: [.AlignAllLeading], metrics: nil, views: viewBindings)
+      NSLayoutConstraint.constraintsWithVisualFormat("H:|-(>=8)-[iv]-(>=8)-|", options: [], metrics: nil, views: viewBindings)
     )
     self.contentView.addConstraints(
-      NSLayoutConstraint.constraintsWithVisualFormat("H:|-[lb]-|", options: [.AlignAllLeading], metrics: nil, views: viewBindings)
+      NSLayoutConstraint.constraintsWithVisualFormat("H:|-(>=8)-[lb]-(>=8)-|", options: [], metrics: nil, views: viewBindings)
     )
     self.contentView.addConstraints(
-      NSLayoutConstraint.constraintsWithVisualFormat("V:|-[iv]-[lb(<=50)]-|", options: [.AlignAllLeading], metrics: nil, views: viewBindings)
+      NSLayoutConstraint.constraintsWithVisualFormat("V:|-[iv]-[lb(>=60)]-|", options: [.AlignAllCenterX], metrics: nil, views: viewBindings)
     )
-    remoteImageView.heightAnchor.constraintEqualToAnchor(remoteImageView.widthAnchor, multiplier: 1).active = true
+    remoteImageView.centerXAnchor.constraintEqualToAnchor(self.contentView.centerXAnchor).active = true
+    remoteImageView.widthAnchor.constraintEqualToAnchor(remoteImageView.heightAnchor, multiplier: 1).active = true
     self.backgroundColor = UIColor.whiteColor()
   }
 
   required init?(coder aDecoder: NSCoder) {
-    fatalError()
+    super.init(coder: aDecoder)
   }
 
   override func prepareForReuse() {
+    self.albumArtView.cancelLoading()
     self.albumArtView.image = nil
     self.label.text = nil
-    self.albumArtView.cancelLoading()
   }
 }
