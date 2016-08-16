@@ -320,9 +320,6 @@ public class HTTP {
 
   internal func complete() {
     HTTP.removeRequest(self)
-    #if DEBUG
-      print("On going http requests: \(HTTP.ongoingRequests.count)")
-    #endif
   }
 }
 
