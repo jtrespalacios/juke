@@ -16,8 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
   func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-    let favoriteRepo = FavoriteAlbumRepo(context: managedObjectContext)
-    let dataSource = ArrayDataSource(reuseKey: AlbumCell.reuseIdentifier) { (cell: AlbumCell, album: Album) in
+    let favoriteRepo = FavoriteAlbumRepo(context: self.managedObjectContext)
+    let dataSource = ArrayDataSource(reuseKey: AlbumCell.reuseIdentifier) { (cell: AlbumCell, album: SpotifyAlbum) in
       cell.label.text = album.name
       guard let image = album.images.first else {
         return

@@ -10,7 +10,8 @@ import UIKit
 import SafariServices
 
 @objc protocol AlbumActions {
-  func toggleFavorite()
+  func favorite()
+  func unFavorite()
 }
 
 @objc class ViewController: UIViewController {
@@ -21,10 +22,10 @@ import SafariServices
   private var selectedIndexPath: NSIndexPath?
   private weak var searchRequest: HTTP?
 
-  private let dataSource: ArrayDataSource<AlbumCell, Album>
+  private let dataSource: ArrayDataSource<AlbumCell, SpotifyAlbum>
   private let favoriteRepo: FavoriteRepo
 
-  init(repo: FavoriteRepo, dataSource: ArrayDataSource<AlbumCell, Album>) {
+  init(repo: FavoriteRepo, dataSource: ArrayDataSource<AlbumCell, SpotifyAlbum>) {
     self.favoriteRepo = repo
     self.dataSource = dataSource
     super.init(nibName: nil, bundle: nil)
@@ -74,8 +75,8 @@ import SafariServices
                           object: self.queryInput,
                           queue: nil,
                           usingBlock: queryFieldBlock)
-    let favoriteMenuItem = UIMenuItem(title: "Favorite", action: #selector(AlbumActions.toggleFavorite))
-    let unfavoriteMenuItem = UIMenuItem(title: "Unfavorite", action: #selector(AlbumActions.toggleFavorite))
+    let favoriteMenuItem = UIMenuItem(title: "Favorite", action: #selector(AlbumActions.favorite))
+    let unfavoriteMenuItem = UIMenuItem(title: "Unfavorite", action: #selector(AlbumActions.unFavorite))
     UIMenuController.sharedMenuController().menuItems = [favoriteMenuItem, unfavoriteMenuItem]
     self.collectionView.registerClass(AlbumCell.self, forCellWithReuseIdentifier: AlbumCell.reuseIdentifier)
     self.collectionView.dataSource = self.dataSource
@@ -113,9 +114,9 @@ import SafariServices
       return super.canPerformAction(action, withSender: sender)
     }
     switch action {
-    case #selector(AlbumActions.toggleFavorite):
+    case #selector(AlbumActions.favorite):
       return !favoriteRepo.isFavorite(album)
-    case #selector(AlbumActions.toggleFavorite):
+    case #selector(AlbumActions.unFavorite):
       return favoriteRepo.isFavorite(album)
     default:
       return super.canPerformAction(action, withSender: sender)
@@ -215,7 +216,9 @@ import SafariServices
     self.presentViewController(alert, animated: true, completion: nil)
   }
 
-  private func updateResults(albums: [Album]) {
+  private func updateResults(albums: [SpotifyAlbum]) {
+    self.favoriteRepo.save()
+    self.favoriteRepo.checkForExistingFavorites(albums)
     self.collectionView.performBatchUpdates({ [unowned self] in
       let sectionZero = NSIndexSet(index: 0)
       self.dataSource.items = albums
@@ -248,7 +251,15 @@ extension ViewController: UICollectionViewDelegate {
 }
 
 extension ViewController: AlbumActions {
-  func toggleFavorite() {
+  func favorite() {
+    toggleFavorite()
+  }
+
+  func unFavorite() {
+    toggleFavorite()
+  }
+
+  private func toggleFavorite() {
     guard let selectedIndexPath = self.selectedIndexPath,
       let album = self.dataSource.item(atIndexPath: selectedIndexPath) else {
         return

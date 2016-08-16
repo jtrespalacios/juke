@@ -48,7 +48,7 @@ public enum Spotify {
   }
 }
 
-public struct Album: Hashable, Equatable {
+public struct SpotifyAlbum: Hashable, Equatable {
   let spotifyId: String
   let name: String
   let images: [SpotifyImage]
@@ -58,11 +58,11 @@ public struct Album: Hashable, Equatable {
   }
 }
 
-public func ==(lhs: Album, rhs: Album) -> Bool {
+public func ==(lhs: SpotifyAlbum, rhs: SpotifyAlbum) -> Bool {
   return lhs.spotifyId == rhs.spotifyId
 }
 
-extension Album: JSONParsable {
+extension SpotifyAlbum: JSONParsable {
   public init?(json: JSON) {
     guard let id = json["id"].string else {
       return nil
@@ -85,7 +85,7 @@ extension Album: JSONParsable {
 }
 
 
-extension Album {
+extension SpotifyAlbum {
   func imageNearestTo(width: Int32) -> SpotifyImage? {
     guard images.count > 0 else {
       return nil
@@ -126,15 +126,15 @@ extension SpotifyImage: JSONParsable {
 }
 
 public struct SearchPayload {
-  let albums: [Album]
+  let albums: [SpotifyAlbum]
 }
 
 extension SearchPayload: JSONParsable {
   public init?(json: JSON) {
-    var results = [Album]()
+    var results = [SpotifyAlbum]()
     if let albums = json["albums"]["items"].array {
       albums.forEach {
-        if let album = Album(json: $0) {
+        if let album = SpotifyAlbum(json: $0) {
           results.append(album)
         }
       }

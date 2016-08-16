@@ -10,37 +10,51 @@ import Foundation
 import CoreData
 
 protocol FavoriteRepo {
-  func isFavorite(album: Album) -> Bool
-  func addFavorite(album: Album)
-  func removeFavorite(album: Album)
+  func isFavorite(album: SpotifyAlbum) -> Bool
+  func addFavorite(album: SpotifyAlbum)
+  func removeFavorite(album: SpotifyAlbum)
   func save()
-  func load()
+  func checkForExistingFavorites(albums: [SpotifyAlbum])
 }
 
 class FavoriteAlbumRepo: FavoriteRepo {
   let context: NSManagedObjectContext!
-  var favorites = Set<Album>()
+  var favorites = Set<String>()
 
   init(context: NSManagedObjectContext) {
     self.context = context
   }
-  func isFavorite(album: Album) -> Bool {
-    return self.favorites.contains(album)
+
+  func isFavorite(album: SpotifyAlbum) -> Bool {
+    return self.favorites.contains(album.spotifyId)
   }
 
-  func addFavorite(album: Album) {
-    self.favorites.insert(album)
+  func addFavorite(album: SpotifyAlbum) {
+    self.favorites.insert(album.spotifyId)
+    _ = Album(insertIntoManagedObjectContext: context, fromSpotifyAlbum: album)
   }
 
-  func removeFavorite(album: Album) {
-    self.favorites.remove(album)
+  func removeFavorite(album: SpotifyAlbum) {
+    Album.deleteItem(withId: album.spotifyId, onContext: context)
+    self.favorites.remove(album.spotifyId)
   }
 
   func save() {
-
+    guard self.context.hasChanges else {
+      return
+    }
+    do {
+      try self.context.save()
+    } catch {
+      fatalError("Error attempting to save context in favorite repo: \(error)")
+    }
   }
 
-  func load() {
-    
+  func checkForExistingFavorites(albums: [SpotifyAlbum]) {
+    guard let favoritedIds = try? Album.filterForFavorites(albums, onContext: context) else {
+      return
+    }
+    self.favorites.removeAll()
+    favoritedIds.forEach { self.favorites.insert($0) }
   }
 }
