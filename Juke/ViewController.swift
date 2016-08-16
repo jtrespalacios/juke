@@ -163,23 +163,21 @@ import SafariServices
 
   private func getActivityIndicator() -> UIView {
     let view = UIView(frame: .zero)
-    let ai = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
-    let activityIndicatorPadding: CGFloat = 25
-    view.translatesAutoresizingMaskIntoConstraints = false
+    let ai = UIActivityIndicatorView()
     ai.translatesAutoresizingMaskIntoConstraints = false
-    ai.widthAnchor.constraintEqualToConstant(150).active = true
-    ai.heightAnchor.constraintEqualToAnchor(ai.widthAnchor, constant: 0).active = true
+    view.translatesAutoresizingMaskIntoConstraints = false
     ai.hidesWhenStopped = true
     view.addSubview(ai)
     view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
     view.layer.cornerRadius = 20
     ai.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor).active = true
     ai.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-    view.leadingAnchor.constraintEqualToAnchor(ai.leadingAnchor, constant: activityIndicatorPadding).active = true
-    ai.trailingAnchor.constraintEqualToAnchor(view.trailingAnchor, constant: activityIndicatorPadding).active = true
-    view.topAnchor.constraintEqualToAnchor(ai.topAnchor, constant: activityIndicatorPadding).active = true
-    ai.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor, constant: activityIndicatorPadding).active = true
+    ai.widthAnchor.constraintEqualToConstant(80).active = true
+    ai.heightAnchor.constraintEqualToAnchor(ai.widthAnchor).active = true
+    view.widthAnchor.constraintEqualToAnchor(ai.widthAnchor, constant: 25).active = true
+    view.heightAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
     view.hidden = true
+    ai.activityIndicatorViewStyle = .WhiteLarge
     self.view.addSubview(view)
     self.view.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor, constant: 0).active = true
     self.view.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor, constant: 0).active = true
