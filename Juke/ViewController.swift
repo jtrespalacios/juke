@@ -21,8 +21,10 @@ import SafariServices
   private weak var collectionView: UICollectionView!
   private weak var noContentLabel: UILabel!
   private var selectedIndexPath: NSIndexPath?
+  private var firstSearchToken: dispatch_once_t = 0
   private weak var searchRequest: HTTP?
 
+  // External Dependencies
   private let dataSource: ArrayDataSource<AlbumCell, SpotifyAlbum>
   private let favoriteRepo: FavoriteRepo
 
@@ -55,6 +57,7 @@ import SafariServices
     noContentLabel.numberOfLines = 0
     noContentLabel.allowsDefaultTighteningForTruncation = true
     noContentLabel.hidden = true
+    noContentLabel.textAlignment = .Center
     [queryInput, searchButton, collectionView, noContentLabel].forEach {
       $0.translatesAutoresizingMaskIntoConstraints = false
       view.addSubview($0)
@@ -116,6 +119,7 @@ import SafariServices
   override func viewDidAppear(animated: Bool) {
     super.viewDidAppear(animated)
     self.queryInput.becomeFirstResponder()
+    self.showNoContentMessage("Enter a word to search.\n\nTap on an album to bring up options.")
   }
 
   override func viewDidDisappear(animated: Bool) {
@@ -145,6 +149,11 @@ import SafariServices
     guard let searchTerm = self.queryInput.text where self.searchRequest == nil else {
       return
     }
+
+    dispatch_once(&self.firstSearchToken) {
+      dispatchMain { self.hideNoContentMessage() }
+    }
+
     self.queryInput.text = nil
     self.queryInput.resignFirstResponder()
     self.searchButton.enabled = false
@@ -260,9 +269,10 @@ import SafariServices
       return
     }
     self.noContentLabel.text = text
-    UIView.transitionWithView(self.noContentLabel,
-                              duration: 0.2,
-                              options: [.CurveEaseOut, .TransitionCrossDissolve],
+    self.noContentLabel.sizeToFit()
+    UIView.transitionWithView(self.view,
+                              duration: 0.3,
+                              options: [.CurveEaseIn, .TransitionCrossDissolve],
                               animations: { self.noContentLabel.hidden = false },
                               completion: nil)
   }
@@ -271,7 +281,7 @@ import SafariServices
     guard !self.noContentLabel.hidden else {
       return
     }
-    UIView.transitionWithView(self.noContentLabel,
+    UIView.transitionWithView(self.view,
                               duration: 0.2,
                               options: [.CurveEaseOut, .TransitionCrossDissolve],
                               animations: { self.noContentLabel.hidden = true },
