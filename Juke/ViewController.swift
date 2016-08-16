@@ -129,40 +129,12 @@ import SafariServices
     self.queryInput.text = nil
     self.queryInput.resignFirstResponder()
     self.searchButton.enabled = false
-    let activityIndicatorTag = 957
-    weak var activityIndicator: UIActivityIndicatorView?
-
-    if let oldActivityIndicator = self.view.viewWithTag(activityIndicatorTag) as? UIActivityIndicatorView {
-      activityIndicator = oldActivityIndicator
-    } else {
-      let ai = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
-      ai.hidesWhenStopped = true
-      ai.stopAnimating()
-      self.view.addSubview(ai)
-      ai.center = self.view.center
-      UIView.transitionWithView(ai,
-                                duration: 0.2,
-                                options: [.CurveEaseOut, .TransitionCrossDissolve],
-                                animations: { ai.startAnimating() },
-                                completion: nil)
-      activityIndicator = ai
-    }
-
+    weak var activityIndicator: UIView? = getActivityIndicator()
     self.searchRequest = Spotify.searchAlbum(withTitle: searchTerm) { (searchResults: SearchPayload?, error: Spotify.Error?) in
-      defer {
-        dispatchMain {
-          if let strongActivityIndicator = activityIndicator {
-            UIView.transitionWithView(strongActivityIndicator,
-                                      duration: 0.2,
-                                      options: [.CurveEaseOut, .TransitionCrossDissolve],
-                                      animations: { strongActivityIndicator.removeFromSuperview() },
-                                      completion: nil)
-          }
-        }
-      }
+      let update: () -> ()
       guard error == nil else {
         let e = error!
-        dispatchMain { [weak self] in
+        update = { [weak self] in
           self?.alertWithError(e)
         }
         return
@@ -170,10 +142,55 @@ import SafariServices
       guard let searchResults = searchResults else {
         return
       }
-      dispatchMain { [weak self] in
+
+      update = { [weak self] in
         self?.updateResults(searchResults.albums)
       }
+
+      dispatchMain {
+        if let strongActivityIndicator = activityIndicator {
+          UIView.transitionWithView(strongActivityIndicator,
+            duration: 0.2,
+            options: [.CurveEaseOut, .TransitionCrossDissolve],
+            animations: { strongActivityIndicator.removeFromSuperview() },
+            completion: { _ in update() })
+        } else {
+          update()
+        }
+      }
     }
+  }
+
+  private func getActivityIndicator() -> UIView {
+    let view = UIView(frame: .zero)
+    let ai = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+    let activityIndicatorPadding: CGFloat = 25
+    view.translatesAutoresizingMaskIntoConstraints = false
+    ai.translatesAutoresizingMaskIntoConstraints = false
+    ai.widthAnchor.constraintEqualToConstant(150).active = true
+    ai.heightAnchor.constraintEqualToAnchor(ai.widthAnchor, constant: 0).active = true
+    ai.hidesWhenStopped = true
+    view.addSubview(ai)
+    view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
+    view.layer.cornerRadius = 20
+    ai.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor).active = true
+    ai.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+    view.leadingAnchor.constraintEqualToAnchor(ai.leadingAnchor, constant: activityIndicatorPadding).active = true
+    ai.trailingAnchor.constraintEqualToAnchor(view.trailingAnchor, constant: activityIndicatorPadding).active = true
+    view.topAnchor.constraintEqualToAnchor(ai.topAnchor, constant: activityIndicatorPadding).active = true
+    ai.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor, constant: activityIndicatorPadding).active = true
+    view.hidden = true
+    self.view.addSubview(view)
+    self.view.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor, constant: 0).active = true
+    self.view.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor, constant: 0).active = true
+    UIView.transitionWithView(view,
+                              duration: 0.2,
+                              options: [.CurveEaseOut, .TransitionCrossDissolve],
+                              animations: {
+                                ai.startAnimating()
+                                view.hidden = false },
+                              completion: nil)
+    return view
   }
 
   private func alertWithError(error: Spotify.Error) {
